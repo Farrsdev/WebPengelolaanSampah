@@ -3,30 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EcoWaste - Sistem Bank Sampah Digital | Interactive Web Preview</title>
+  <title>EcoWaste - Bank Sampah Komunitas</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-              800: '#065f46',
-              900: '#064e3b',
-            }
           }
         }
       }
@@ -34,263 +23,377 @@
   </script>
   <style>
     .glass-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(226, 232, 240, 0.8);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.6);
+      border-radius: 1.5rem;
     }
-    .gradient-hero {
-      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15) 0%, rgba(248, 250, 252, 1) 70%);
+    .glass-card-static {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.6);
+      border-radius: 1.5rem;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased font-sans selection:bg-brand-500 selection:text-white">
+<body class="min-h-screen bg-slate-50/50 flex flex-col font-sans text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
 
-  <!-- NAVBAR -->
-  <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+  <!-- HEADER NAVBAR -->
+  <header class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-slate-200/60 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Logo Brand -->
+      <div class="flex items-center gap-3 cursor-pointer">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 to-green-600 shadow-md shadow-emerald-500/20 flex items-center justify-center text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 21a9 9 0 01-9-9c0-4.97 4.03-9 9-9 4.14 0 7.64 2.8 8.68 6.64.21.78-.38 1.48-1.18 1.48H12"/></svg>
         </div>
         <div>
-          <span class="text-lg font-extrabold tracking-tight text-slate-900">EcoWaste</span>
-          <span class="text-xs ml-1.5 px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 font-bold">Preview</span>
+          <span class="text-xl font-black text-slate-800 tracking-tight block leading-none">EcoWaste</span>
+          <span class="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block mt-1">Komunitas</span>
         </div>
       </div>
-      <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
-        <a href="#overview" class="hover:text-brand-600 transition-colors">Ringkasan</a>
-        <a href="#simulator" class="hover:text-brand-600 transition-colors">Simulasi Transaksi</a>
-        <a href="#features" class="hover:text-brand-600 transition-colors">Fitur Sistem</a>
-        <a href="#database" class="hover:text-brand-600 transition-colors">Skema Database</a>
-      </div>
-      <div class="flex items-center gap-3">
-        <span class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 border border-slate-200">
-          Next.js 16 • PostgreSQL
-        </span>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#home" class="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Home</a>
+        <a href="#cara-kerja" class="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Cara Kerja</a>
+        <a href="#harga" class="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Harga</a>
+        <a href="#tentang" class="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Tentang</a>
+      </nav>
+
+      <!-- Auth Actions -->
+      <div class="flex items-center gap-4">
+        <button class="p-2 rounded-xl text-slate-400 hover:text-slate-600 transition-colors" title="Notifikasi">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </button>
+        <button class="p-2 rounded-xl text-slate-400 hover:text-slate-600 transition-colors" title="Bantuan">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </button>
+        
+        <div class="h-5 w-px bg-slate-200" />
+
+        <a href="#daftar" class="text-xs font-bold text-slate-700 hover:text-emerald-600 transition-colors px-3 py-2">
+          Login
+        </a>
+        <a href="#daftar" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-md shadow-emerald-500/10 transition-all hover:scale-[1.02]">
+          Register
+        </a>
       </div>
     </div>
-  </nav>
+  </header>
 
   <!-- HERO SECTION -->
-  <section id="overview" class="relative pt-16 pb-20 overflow-hidden gradient-hero border-b border-slate-200/60">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-200/60 text-brand-700 text-xs font-bold mb-6">
-        <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
-        Proyek Fullstack Web Pengelolaan Bank Sampah Digital
+  <section id="home" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+    <!-- Left Column: Hero Text -->
+    <div class="lg:col-span-7 space-y-6 lg:pr-8">
+      <!-- Badge Pill -->
+      <div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 backdrop-blur-md">
+        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+        Eco-Friendly Community Initiative
       </div>
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-        Digitalisasi Bank Sampah Modern dengan <span class="bg-gradient-to-r from-brand-600 to-teal-600 bg-clip-text text-transparent">Double-Entry Ledger</span>
+
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-800 leading-[1.1] tracking-tight">
+        Ubah Sampah Jadi <br className="hidden sm:inline" />
+        <span class="relative inline-block text-emerald-600">
+          Berkah
+          <span class="absolute bottom-1 left-0 w-full h-2 bg-emerald-200/60 rounded-full -z-10"></span>
+        </span>
       </h1>
-      <p class="mt-4 text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
-        Aplikasi web pencatatan sampah terintegrasi RDBMS PostgreSQL & Prisma ORM. Dilengkapi kalkulasi poin real-time (multiplier 10x), bukti foto timbangan fisik, pencairan uang tunai/sembako, dan proteksi anti-race condition.
+
+      <p class="text-slate-600 text-base sm:text-lg max-w-xl leading-relaxed">
+        Bergabunglah dengan Bank Sampah Komunitas. Kelola sampah rumah tangga Anda secara bertanggung jawab dan tukarkan dengan poin bernilai ekonomi.
       </p>
 
-      <!-- Quick Badges -->
-      <div class="mt-8 flex flex-wrap justify-center gap-2 sm:gap-3 text-xs font-bold text-slate-700">
-        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">⚡ Next.js 16 (React 19)</span>
-        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">🐘 PostgreSQL Database</span>
-        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">💎 Prisma ORM (10 Tabel)</span>
-        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">🎨 Tailwind CSS v4</span>
-        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">🔒 SHA-256 Hashing</span>
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+        <a href="#daftar" class="flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-sm shadow-xl shadow-emerald-800/10 hover:shadow-emerald-800/20 transition-all hover:scale-[1.01]">
+          Daftar Sekarang
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+        <a href="#harga" class="flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-100 hover:bg-emerald-200/80 text-emerald-800 font-bold text-sm transition-all">
+          Cek Harga Sampah
+        </a>
       </div>
+    </div>
 
-      <!-- Demo Accounts Box -->
-      <div class="mt-10 p-5 rounded-2xl glass-card max-w-xl mx-auto text-left shadow-lg shadow-slate-200/50">
-        <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">Akun Demo Sistem (Role-Based Access):</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
-            <span class="font-bold text-brand-700">👨‍💼 Role Admin:</span>
-            <div class="mt-1 font-mono text-slate-600 text-[11px]">admin@ecowaste.id</div>
-            <div class="font-mono text-slate-500 text-[11px]">Pass: password123</div>
-          </div>
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
-            <span class="font-bold text-teal-700">🧑‍🌾 Role Warga / Nasabah:</span>
-            <div class="mt-1 font-mono text-slate-600 text-[11px]">user@ecowaste.id</div>
-            <div class="font-mono text-slate-500 text-[11px]">Pass: password123</div>
-          </div>
+    <!-- Right Column: Logo Card -->
+    <div class="lg:col-span-5 flex items-center justify-center lg:justify-end">
+      <div class="relative w-full max-w-sm glass-card-static p-8 sm:p-10 flex flex-col items-center justify-center bg-white/80 shadow-2xl shadow-slate-200/50 group hover:-translate-y-1 transition-all duration-500">
+        <!-- SVG Logo EcoWaste -->
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-48 h-48 drop-shadow-xl animate-float">
+          <path d="M68 62C76 48 94 40 115 40C140 40 160 55 168 76C174 92 172 108 162 122C150 138 132 144 118 144" stroke="#16a34a" stroke-width="10" stroke-linecap="round" />
+          <path d="M68 62C90 62 110 52 135 44C115 56 100 74 76 76" fill="#22c55e" opacity="0.8" />
+          <path d="M68 62C60 76 56 94 60 112C66 130 80 144 98 148" stroke="#15803d" stroke-width="12" stroke-linecap="round" />
+          <circle cx="100" cy="125" r="28" fill="#eab308" stroke="#ca8a04" stroke-width="3" />
+          <circle cx="100" cy="125" r="18" fill="white" />
+          <path d="M106 119L97 121L99 123L93 129L95 131L101 125L103 127L106 119Z" fill="#ca8a04" />
+        </svg>
+        
+        <div class="text-center mt-6 relative z-10">
+          <h2 class="text-xl font-extrabold text-slate-800 tracking-tight uppercase">Bank Sampah</h2>
+          <h3 class="text-lg font-bold text-slate-500 tracking-wide uppercase mt-0.5">Komunitas</h3>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- INTERACTIVE SIMULATOR (TRANSACTION CALCULATOR) -->
-  <section id="simulator" class="py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-10">
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Simulasi Kalkulator Poin Transaksi</h2>
-      <p class="text-sm text-slate-500 mt-2">Coba langsung logika formula yang ada pada file <code class="text-brand-700 font-mono font-bold">lib/poin.ts</code> aplikasi EcoWaste.</p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-      <!-- Calculator Input -->
-      <div class="lg:col-span-7 p-6 rounded-2xl glass-card shadow-sm border border-slate-200 space-y-5">
-        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-          <span class="w-6 h-6 rounded-md bg-brand-500 text-white flex items-center justify-center text-xs font-black">1</span>
-          Input Timbangan Sampah
-        </h3>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Pilih Kategori Sampah</label>
-          <select id="simJenis" onchange="hitungSimulasi()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 focus:outline-none focus:border-brand-500">
-            <option value="3000">Kardus & Kertas Bekas (Rp 3.000 / kg)</option>
-            <option value="4500" selected>Botol Plastik PET Bersih (Rp 4.500 / kg)</option>
-            <option value="8000">Kaleng Aluminium & Besi (Rp 8.000 / kg)</option>
-            <option value="1500">Minyak Jelantah (Rp 1.500 / kg)</option>
-          </select>
+  <!-- STATS SECTION -->
+  <section class="bg-slate-100/50 border-y border-slate-200/40 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6 lg:gap-12">
+      <!-- Card 1: Warga -->
+      <div class="glass-card p-6 flex items-center gap-5 border-slate-200/40">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center shadow-sm">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         </div>
-
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Berat Timbangan (Kilogram)</label>
-          <div class="relative">
-            <input type="number" id="simBerat" value="3.5" min="0.1" step="0.1" oninput="hitungSimulasi()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-500 pr-12">
-            <span class="absolute right-3.5 top-2.5 text-xs font-bold text-slate-400">kg</span>
-          </div>
-        </div>
-
-        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-          <span>Multiplier Sistem: <strong class="text-slate-800 font-mono">10x</strong></span>
-          <span>Cash Rate: <strong class="text-slate-800 font-mono">Rp 0.08 / Poin</strong></span>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Warga</p>
+          <p class="text-2xl font-black text-slate-800 mt-0.5">1.248</p>
         </div>
       </div>
 
-      <!-- Calculation Result Card -->
-      <div class="lg:col-span-5 p-6 rounded-2xl bg-gradient-to-br from-brand-600 to-teal-700 text-white shadow-xl shadow-brand-600/20 flex flex-col justify-between">
-        <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/20">Hasil Estimasi Transaksi</span>
-          <div class="mt-5">
-            <p class="text-xs text-brand-100 font-medium">Poin Diterima Nasabah (+Kredit):</p>
-            <p id="resPoin" class="text-3xl sm:text-4xl font-black tracking-tight mt-0.5">157.500 <span class="text-base font-normal">Poin</span></p>
-          </div>
-          <div class="mt-4 pt-4 border-t border-white/20">
-            <p class="text-xs text-brand-100 font-medium">Nilai Pencairan Tunai (Cash Out):</p>
-            <p id="resUang" class="text-xl font-bold mt-0.5">Rp 12.600</p>
-            <p class="text-[11px] text-brand-200 mt-1">*Margin 20% dialokasikan kas operasional bank sampah.</p>
-          </div>
+      <!-- Card 2: Sampah Terkumpul -->
+      <div class="glass-card p-6 flex items-center gap-5 border-slate-200/40">
+        <div class="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-600 flex items-center justify-center shadow-sm">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
         </div>
-        <div class="mt-6 text-[11px] text-brand-100 bg-black/20 p-2.5 rounded-lg font-mono">
-          Formula: Math.floor(Berat × Harga × 10)
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sampah Terkumpul</p>
+          <p class="text-2xl font-black text-slate-800 mt-0.5">45.920 <span class="text-xs text-slate-400 font-semibold">kg</span></p>
+        </div>
+      </div>
+
+      <!-- Card 3: Poin Tersalurkan -->
+      <div class="glass-card p-6 flex items-center gap-5 border-slate-200/40">
+        <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 flex items-center justify-center shadow-sm">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Poin Tersalurkan</p>
+          <p class="text-2xl font-black text-slate-800 mt-0.5">82.4M</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FEATURES GRID -->
-  <section id="features" class="py-16 bg-white border-y border-slate-200/80">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-12">
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Fitur Unggulan Sistem EcoWaste</h2>
-        <p class="text-sm text-slate-500 mt-2">Dibangun dengan standar rekayasa perangkat lunak modern untuk performa dan keamanan data tinggi.</p>
+  <!-- HOW IT WORKS SECTION -->
+  <section id="cara-kerja" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 space-y-14">
+    <!-- Header -->
+    <div class="text-center space-y-3 max-w-2xl mx-auto">
+      <h2 class="text-3xl font-black text-slate-800 tracking-tight">Bagaimana Cara Kerjanya?</h2>
+      <p class="text-slate-500 text-sm leading-relaxed">
+        Tiga langkah sederhana untuk mulai berkontribusi pada lingkungan dan mendapatkan manfaat ekonomi.
+      </p>
+    </div>
+
+    <!-- Steps Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Step 1 -->
+      <div class="relative flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full border-2 border-emerald-500 text-emerald-600 font-extrabold text-sm flex items-center justify-center bg-white shadow-md relative z-10">
+          1
+        </div>
+        <div class="w-full glass-card p-6 pt-10 mt-[-24px] border-slate-200/40 bg-white/70 hover:border-emerald-500/30 transition-all duration-300">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </div>
+          <h3 class="font-bold text-slate-800 text-base">Pilah Sampah</h3>
+          <p class="text-xs text-slate-400 leading-relaxed mt-2">
+            Pisahkan sampah organik dan anorganik dari rumah Anda.
+          </p>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
-          <div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-lg mb-4">💳</div>
-          <h3 class="text-base font-bold text-slate-800">Double-Entry Ledger Saldo</h3>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Saldo nasabah tidak disimpan sebagai angka biasa, melainkan dihitung otomatis dari mutasi riil: <code class="font-mono text-[11px] bg-slate-200/70 px-1 py-0.5 rounded">SUM(kredit) - SUM(debit)</code> di tabel SaldoLog.
+      <!-- Step 2 -->
+      <div class="relative flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full border-2 border-emerald-500 text-emerald-600 font-extrabold text-sm flex items-center justify-center bg-white shadow-md relative z-10">
+          2
+        </div>
+        <div class="w-full glass-card p-6 pt-10 mt-[-24px] border-slate-200/40 bg-white/70 hover:border-emerald-500/30 transition-all duration-300">
+          <div class="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-600 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="font-bold text-slate-800 text-base">Setor ke Bank</h3>
+          <p class="text-xs text-slate-400 leading-relaxed mt-2">
+            Bawa sampah yang sudah dipilah ke titik penjemputan RT/RW.
           </p>
         </div>
+      </div>
 
-        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
-          <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-lg mb-4">🛡️</div>
-          <h3 class="text-base font-bold text-slate-800">Anti-Race Condition Guard</h3>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Pada approval penukaran poin, sistem melakukan re-check saldo di dalam database transaction sebelum mutasi debit dibuat agar saldo nasabah tidak pernah minus.
-          </p>
+      <!-- Step 3 -->
+      <div class="relative flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full border-2 border-emerald-500 text-emerald-600 font-extrabold text-sm flex items-center justify-center bg-white shadow-md relative z-10">
+          3
         </div>
-
-        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg mb-4">📸</div>
-          <h3 class="text-base font-bold text-slate-800">Bukti Foto Timbangan Fisik</h3>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Setiap transaksi setoran sampah dilengkapi foto timbangan fisik mandiri (Base64/SVG Data URL) yang dapat dipratinjau melalui popup modal baik oleh warga maupun admin.
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg mb-4">🔐</div>
-          <h3 class="text-base font-bold text-slate-800">Password Hashing SHA-256</h3>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Tidak ada kata sandi yang disimpan plaintext. Seluruh autentikasi menggunakan enkripsi hash bawaan Node.js <code class="font-mono text-[11px] bg-slate-200/70 px-1 py-0.5 rounded">crypto</code> stdlib tanpa dependensi rentan.
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
-          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-lg mb-4">📦</div>
-          <h3 class="text-base font-bold text-slate-800">Input Setoran Multi-Row</h3>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Form transaksi Bento Grid modern memungkinkan petugas menimbang dan mencatat berbagai jenis sampah sekaligus dalam satu sesi transaksi secara efisien.
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg mb-4">🚀</div>
-          <h3 class="text-base font-bold text-slate-800">Auto-Redirect Role Guard</h3>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Pengguna yang sudah login secara otomatis diarahkan ke dashboard perannya masing-masing tanpa harus kembali ke landing page secara berulang-ulang.
+        <div class="w-full glass-card p-6 pt-10 mt-[-24px] border-slate-200/40 bg-white/70 hover:border-emerald-500/30 transition-all duration-300">
+          <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-bold text-slate-800 text-base">Tukar Poin</h3>
+          <p class="text-xs text-slate-400 leading-relaxed mt-2">
+            Dapatkan poin yang bisa ditukar dengan uang atau barang.
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- DATABASE STRUCTURE -->
-  <section id="database" class="py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-10">
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Integrasi Basis Data (10 Model RDBMS)</h2>
-      <p class="text-sm text-slate-500 mt-2">Dikelola menggunakan Prisma ORM dan terhubung ke PostgreSQL lokal.</p>
+  <!-- DETAILS & PRICING SECTION -->
+  <section id="harga" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Left Column: Waste Prices Card -->
+    <div class="lg:col-span-7 glass-card-static p-8">
+      <div class="flex items-center justify-between border-b border-slate-200/60 pb-5 mb-6">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">Harga Sampah Hari Ini</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Dapatkan poin maksimal berdasarkan jenis sampah</p>
+        </div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50">
+          Update: Real-Time
+        </span>
+      </div>
+
+      <div class="divide-y divide-slate-100">
+        <!-- Item 1: Botol Plastik PET -->
+        <div class="py-4 flex items-center justify-between hover:bg-slate-50/50 px-2 rounded-xl transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 01-9-9c0-4.97 4.03-9 9-9 4.14 0 7.64 2.8 8.68 6.64.21.78-.38 1.48-1.18 1.48H12"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-700">Botol Plastik PET</p>
+              <p class="text-[10px] text-slate-400 font-medium">Botol air mineral bersih tanpa label</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-black text-slate-800">Rp 4.500</p>
+            <p class="text-[10px] text-slate-400 font-semibold uppercase">/ kg</p>
+          </div>
+        </div>
+
+        <!-- Item 2: Kardus Bekas -->
+        <div class="py-4 flex items-center justify-between hover:bg-slate-50/50 px-2 rounded-xl transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 01-9-9c0-4.97 4.03-9 9-9 4.14 0 7.64 2.8 8.68 6.64.21.78-.38 1.48-1.18 1.48H12"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-700">Kardus & Kertas Bekas</p>
+              <p class="text-[10px] text-slate-400 font-medium">Kardus coklat packing kering</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-black text-slate-800">Rp 3.000</p>
+            <p class="text-[10px] text-slate-400 font-semibold uppercase">/ kg</p>
+          </div>
+        </div>
+
+        <!-- Item 3: Kaleng & Logam -->
+        <div class="py-4 flex items-center justify-between hover:bg-slate-50/50 px-2 rounded-xl transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 01-9-9c0-4.97 4.03-9 9-9 4.14 0 7.64 2.8 8.68 6.64.21.78-.38 1.48-1.18 1.48H12"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-700">Kaleng Aluminium & Besi</p>
+              <p class="text-[10px] text-slate-400 font-medium">Kaleng minuman dan logam bekas</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-black text-slate-800">Rp 8.000</p>
+            <p class="text-[10px] text-slate-400 font-semibold uppercase">/ kg</p>
+          </div>
+        </div>
+
+        <!-- Item 4: Minyak Jelantah -->
+        <div class="py-4 flex items-center justify-between hover:bg-slate-50/50 px-2 rounded-xl transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 01-9-9c0-4.97 4.03-9 9-9 4.14 0 7.64 2.8 8.68 6.64.21.78-.38 1.48-1.18 1.48H12"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-700">Minyak Jelantah</p>
+              <p class="text-[10px] text-slate-400 font-medium">Minyak goreng bekas pakai dalam botol</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-black text-slate-800">Rp 1.500</p>
+            <p class="text-[10px] text-slate-400 font-semibold uppercase">/ kg</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
-      <table class="w-full text-left text-xs">
-        <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-          <tr>
-            <th class="px-5 py-3.5">Nama Model / Tabel</th>
-            <th class="px-5 py-3.5">Fungsi Entitas</th>
-            <th class="px-5 py-3.5">Constraint Utama</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 text-slate-600">
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">User</td><td class="px-5 py-3">Akun pengguna warga & admin</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(email, noHp)</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">JenisSampah</td><td class="px-5 py-3">Kategori sampah & tarif dasar</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(namaJenis), Restrict</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">Wilayah</td><td class="px-5 py-3">Master zonasi RT/RW pengumpulan</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(namaWilayah, kodeWilayah)</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">LaporanSampah</td><td class="px-5 py-3">Transaksi setor sampah penimbangan</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(kodeSetor), FK User/Jenis/Wilayah</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">FotoSampah</td><td class="px-5 py-3">Bukti fisik timbangan sampah (1-to-1)</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(laporanId), Cascade</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">SaldoLog</td><td class="px-5 py-3">Buku besar mutasi kredit & debit</td><td class="px-5 py-3 font-mono">UUID PK, FK userId (Cascade)</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">Penukaran</td><td class="px-5 py-3">Pengajuan pencairan saldo poin warga</td><td class="px-5 py-3 font-mono">UUID PK, FK idWarga, FK idAdmin, FK rewardId</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">Reward</td><td class="px-5 py-3">Katalog hadiah & paket sembako</td><td class="px-5 py-3 font-mono">UUID PK, stok (Int), aktif (Boolean)</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">KegiatanKomunitas</td><td class="px-5 py-3">Jadwal kerja bakti bank sampah</td><td class="px-5 py-3 font-mono">UUID PK, tanggal, lokasi</td></tr>
-          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">FeedbackWarga</td><td class="px-5 py-3">Aspirasi & aduan nasabah</td><td class="px-5 py-3 font-mono">UUID PK, FK userId (Cascade)</td></tr>
-        </tbody>
-      </table>
+    <!-- Right Column: Tentang Komunitas & Visi -->
+    <div id="tentang" class="lg:col-span-5 space-y-6">
+      <!-- Card 1: Tentang Komunitas -->
+      <div class="p-8 rounded-3xl bg-emerald-800 text-white shadow-xl relative overflow-hidden group">
+        <h3 class="text-lg font-bold">Tentang Komunitas</h3>
+        <p class="text-xs text-emerald-100/90 leading-relaxed mt-3">
+          Bank Sampah Komunitas adalah inisiatif berbasis warga (RT/RW) yang bertujuan mengelola limbah domestik secara mandiri dan berkelanjutan.
+        </p>
+        
+        <div class="flex items-center gap-2 mt-6">
+          <div class="flex -space-x-2">
+            <div class="w-8 h-8 rounded-full bg-emerald-400 border-2 border-emerald-800 text-[10px] font-bold flex items-center justify-center">AR</div>
+            <div class="w-8 h-8 rounded-full bg-teal-400 border-2 border-emerald-800 text-[10px] font-bold flex items-center justify-center">SN</div>
+            <div class="w-8 h-8 rounded-full bg-amber-400 border-2 border-emerald-800 text-[10px] font-bold flex items-center justify-center">BS</div>
+          </div>
+          <span class="text-[10px] font-bold text-emerald-200">10+ Pengelola Aktif</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Visi Kami -->
+      <div class="p-8 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 shadow-sm">
+        <h3 class="text-lg font-bold text-emerald-900">Visi Kami</h3>
+        <p class="text-xs text-emerald-800/80 leading-relaxed mt-3">
+          Menjadikan lingkungan RT/RW bebas sampah plastik sekaligus memberdayakan ekonomi warga melalui sistem perbankan poin yang transparan.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALL TO ACTION BANNER -->
+  <section id="daftar" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="relative p-10 sm:p-14 rounded-3xl bg-slate-900 text-white overflow-hidden shadow-2xl flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+      <div class="space-y-4 max-w-xl relative z-10">
+        <h2 class="text-3xl font-extrabold tracking-tight">Siap Menjadi Pahlawan Lingkungan?</h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Mulai langkah kecilmu hari ini. Bergabung dengan ribuan warga lainnya yang sudah berkontribusi.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 relative z-10 flex-shrink-0">
+        <a href="#home" class="px-6 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold text-sm text-center shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]">
+          Daftar Sekarang
+        </a>
+        <button class="px-6 py-4 rounded-2xl border border-white/20 hover:bg-white/10 text-white font-bold text-sm text-center transition-all">
+          Hubungi Admin RW
+        </button>
+      </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 text-xs text-center">
-    <div class="max-w-4xl mx-auto px-4 space-y-3">
-      <p class="font-bold text-slate-200">EcoWaste - Sistem Bank Sampah Digital</p>
-      <p>Proyek Pembelajaran Jarak Jauh (PJJ) Kejuruan Pemrograman Web • SMK RPL</p>
-      <p class="text-slate-500">Dikembangkan dengan Next.js 16, PostgreSQL, Prisma, dan Tailwind CSS.</p>
+  <footer class="mt-auto bg-white border-t border-slate-200/50 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="text-center md:text-left space-y-1">
+        <p class="text-xs font-black text-slate-800 uppercase tracking-wider">Bank Sampah Komunitas</p>
+        <p class="text-[10px] text-slate-400">© 2026 EcoWaste Bank. Empowering Communities Through Green Action.</p>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a href="#" class="text-[11px] font-bold text-slate-400 hover:text-emerald-600 transition-colors">About Us</a>
+        <a href="#" class="text-[11px] font-bold text-slate-400 hover:text-emerald-600 transition-colors">Contact</a>
+        <a href="#" class="text-[11px] font-bold text-slate-400 hover:text-emerald-600 transition-colors">Privacy Policy</a>
+        <a href="#" class="text-[11px] font-bold text-slate-400 hover:text-emerald-600 transition-colors">Terms of Service</a>
+      </div>
     </div>
   </footer>
 
-  <!-- SCRIPT FOR SIMULATOR -->
-  <script>
-    function hitungSimulasi() {
-      const harga = parseFloat(document.getElementById('simJenis').value) || 0;
-      const berat = parseFloat(document.getElementById('simBerat').value) || 0;
-      
-      const MULTIPLIER = 10;
-      const CASH_RATE = 0.08;
-
-      const subtotalPoin = Math.floor(berat * harga * MULTIPLIER);
-      const estimasiUang = Math.floor(subtotalPoin * CASH_RATE);
-
-      document.getElementById('resPoin').innerHTML = subtotalPoin.toLocaleString('id-ID') + ' <span class="text-base font-normal">Poin</span>';
-      document.getElementById('resUang').innerText = 'Rp ' + estimasiUang.toLocaleString('id-ID');
-    }
-    // Run on init
-    hitungSimulasi();
-  </script>
 </body>
 </html>
