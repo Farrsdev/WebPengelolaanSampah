@@ -162,7 +162,7 @@ export default function LaporanRekapPage() {
           <p className="text-slate-500 mt-1 text-sm font-medium">Insight performa bank sampah bulanan.</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 print:hidden">
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
@@ -172,12 +172,27 @@ export default function LaporanRekapPage() {
             <option>September 2024</option>
             <option>Agustus 2024</option>
           </select>
-          <button className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold text-xs shadow-md transition-all hover:scale-[1.02]">
+          <button 
+            type="button"
+            onClick={() => window.print()}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold text-xs shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+            title="Cetak atau Simpan sebagai PDF"
+          >
             <Download className="w-4 h-4" />
             Export PDF
           </button>
         </div>
       </header>
+
+      {/* Print-Only Official Report Header */}
+      <div className="hidden print:block border-b-2 border-slate-800 pb-4 mb-6">
+        <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">BANK SAMPAH DIGITAL ECOWASTE</h1>
+        <p className="text-sm font-bold text-emerald-800 mt-0.5">Laporan Rekapitulasi Performa & Akumulasi Sampah Bulanan</p>
+        <div className="flex items-center justify-between text-xs text-slate-500 mt-2">
+          <span>Periode: <strong>{selectedMonth}</strong></span>
+          <span>Dicetak: {new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
+        </div>
+      </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

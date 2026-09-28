@@ -88,8 +88,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <>
       <Sidebar />
-      <main className="flex-1 lg:ml-[260px] min-h-screen relative z-10">
-        <div className="p-6 sm:p-8 lg:p-10 pt-16 lg:pt-10">{children}</div>
+      <main className="flex-1 lg:ml-[260px] min-h-screen relative z-10 print:ml-0 print:p-0">
+        <div className="p-6 sm:p-8 lg:p-10 pt-16 lg:pt-10 print:p-0">{children}</div>
       </main>
     </>
   );

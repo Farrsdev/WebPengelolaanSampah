@@ -55,6 +55,55 @@ export default function AdminPenukaranPage() {
     }
   };
 
+  const handleExportData = () => {
+    if (list.length === 0) {
+      showToast("Tidak ada data penukaran untuk diexport.", "error");
+      return;
+    }
+
+    const headers = [
+      "ID Penukaran",
+      "Tanggal Pengajuan",
+      "Nama Nasabah",
+      "Email Nasabah",
+      "No HP",
+      "Jenis Penukaran",
+      "Jumlah Poin",
+      "Keterangan / Detail",
+      "Status",
+      "Admin Pemroses",
+      "Tanggal Diproses"
+    ];
+
+    const rows = list.map((p) => [
+      `"${p.id}"`,
+      `"${new Date(p.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}"`,
+      `"${(p.warga?.nama || "-").replace(/"/g, '""')}"`,
+      `"${(p.warga?.email || "-").replace(/"/g, '""')}"`,
+      `"${(p.warga?.noHp || "-").replace(/"/g, '""')}"`,
+      `"${p.jenis === "uang_tunai" ? "Uang Tunai" : "Reward / Sembako"}"`,
+      `"${Number(p.jumlahPoin).toLocaleString("id-ID")}"`,
+      `"${(p.keteranganReward || "-").replace(/"/g, '""')}"`,
+      `"${(p.status || "").toUpperCase()}"`,
+      `"${(p.adminProses?.nama || "-").replace(/"/g, '""')}"`,
+      `"${p.processedAt ? new Date(p.processedAt).toLocaleDateString("id-ID") : "-"}"`
+    ]);
+
+    const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const timestamp = new Date().toISOString().slice(0, 10);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Data_Penukaran_Poin_EcoWaste_${timestamp}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    showToast("Data penukaran poin berhasil diexport!");
+  };
+
   // Stats Card Calculations
   const pendingCount = list.filter((p) => p.status === "menunggu").length || 24;
   const totalPointsRedeemed = list
@@ -75,7 +124,11 @@ export default function AdminPenukaranPage() {
             <Filter className="w-4 h-4 text-slate-400" />
             Filter
           </button>
-          <button className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold text-xs shadow-md transition-all hover:scale-[1.02]">
+          <button 
+            onClick={handleExportData}
+            className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold text-xs shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+            title="Download CSV / Excel"
+          >
             <Download className="w-4 h-4" />
             Export Data
           </button>

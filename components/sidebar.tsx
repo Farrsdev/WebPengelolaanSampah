@@ -165,7 +165,7 @@ export default function Sidebar() {
       {/* Mobile Toggle Button */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-xl bg-slate-900 text-white border border-slate-800 shadow-md"
+        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-xl bg-slate-900 text-white border border-slate-800 shadow-md print:hidden"
         aria-label="Toggle menu"
       >
         {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -174,14 +174,14 @@ export default function Sidebar() {
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-slate-950/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-30 bg-slate-950/60 backdrop-blur-sm lg:hidden print:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Aside Container */}
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen w-[240px] flex flex-col transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-40 h-screen w-[240px] flex flex-col transition-transform duration-300 lg:translate-x-0 print:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
