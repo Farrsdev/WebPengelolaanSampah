@@ -14,6 +14,7 @@ import {
   ImagePlus
 } from "lucide-react";
 import { useStore } from "@/lib/store";
+import { POIN_MULTIPLIER, poinToRupiah } from "@/lib/poin";
 
 interface WasteRow {
   id: number;
@@ -97,7 +98,7 @@ export default function InputSetorPage() {
     const item = jenisSampah.find((j) => j.id === row.jenisId);
     const weight = parseFloat(row.beratKg) || 0;
     const price = item ? Number(item.hargaPerKg) : 0;
-    return sum + (weight * price);
+    return sum + Math.floor(weight * price * POIN_MULTIPLIER);
   }, 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -425,8 +426,8 @@ export default function InputSetorPage() {
                 <span className="font-extrabold">{totalWeight.toFixed(1)} kg</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="opacity-75">Bonus Admin</span>
-                <span className="font-extrabold">+0 Poin</span>
+                <span className="opacity-75">Estimasi Cash Out</span>
+                <span className="font-extrabold">≈ Rp {poinToRupiah(totalPoints).toLocaleString("id-ID")}</span>
               </div>
             </div>
 

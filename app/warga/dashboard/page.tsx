@@ -6,6 +6,7 @@ import { Coins, TrendingUp, History, Gift, Recycle, ArrowUpRight, Calendar, MapP
 import { useAuth } from "@/lib/auth";
 import { useStore } from "@/lib/store";
 import { getSaldoWarga, getKegiatan } from "@/lib/actions";
+import { poinToRupiah, cashRateLabel } from "@/lib/poin";
 
 export default function WargaDashboardPage() {
   const { user } = useAuth();
@@ -23,6 +24,14 @@ export default function WargaDashboardPage() {
 
     getKegiatan().then((data) => setKegiatans(data));
   }, [user]);
+
+  const getFallbackImage = (jenis?: string) => {
+    const j = (jenis || "").toLowerCase();
+    if (j.includes("kertas") || j.includes("kardus")) return "/uploads/sample_kertas.jpg";
+    if (j.includes("logam") || j.includes("besi") || j.includes("kaleng")) return "/uploads/sample_logam.jpg";
+    if (j.includes("kaca")) return "/uploads/sample_kaca.jpg";
+    return "/uploads/sample_plastik.jpg";
+  };
 
   const userRecords = user ? berat.filter((r) => r.user?.id === user.id || r.user?.email === user.email) : [];
   const totalKgWarga = userRecords.reduce((sum, r) => sum + Number(r.beratKg), 0);
@@ -66,7 +75,7 @@ export default function WargaDashboardPage() {
               <span className="text-sm font-semibold text-slate-400">poin</span>
             </p>
             <p className="text-xs text-slate-400 font-medium mt-2">
-              Setara Rp {saldo.saldoPoin.toLocaleString("id-ID")} (Konversi 1 Poin = Rp 1)
+              ≈ Rp {poinToRupiah(saldo.saldoPoin).toLocaleString("id-ID")} jika dicairkan ({cashRateLabel})
             </p>
           </div>
         </div>
@@ -157,60 +166,67 @@ export default function WargaDashboardPage() {
                 <th className="px-6 py-4">Jenis Sampah</th>
                 <th className="px-6 py-4 text-center">Foto</th>
                 <th className="px-6 py-4 text-right">Berat (kg)</th>
-                <th className="px-7 py-4 text-right">Poin Diterima</th>
+                <th className="px-6 py-4 text-right">Poin Diterima</th>
+                <th className="px-6 py-4 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {userRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-7 py-12 text-center text-slate-400 text-sm">
+                  <td colSpan={7} className="px-7 py-12 text-center text-slate-400 text-sm">
                     Belum ada riwayat setor sampah. Silakan setorkan sampah kamu ke Bank Sampah!
                   </td>
                 </tr>
               ) : (
-                userRecords.map((r) => (
-                  <tr key={r.id} className="hover:bg-emerald-500/[0.04] transition-colors duration-150">
-                    <td className="px-7 py-4 text-slate-500 text-xs font-medium">
-                      {new Date(r.tanggalSetor).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="px-6 py-4 font-medium text-slate-700 text-xs">{r.wilayah?.namaWilayah}</td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-700">{r.jenisSampah?.namaJenis}</td>
-                    <td className="px-6 py-4 text-center">
-                      <div className="flex items-center justify-center">
-                        {r.fotoSampah?.urlFoto ? (
+                userRecords.map((r) => {
+                  const fotoSrc = r.fotoSampah?.urlFoto || getFallbackImage(r.jenisSampah?.namaJenis);
+                  return (
+                    <tr key={r.id} className="hover:bg-emerald-500/[0.04] transition-colors duration-150">
+                      <td className="px-7 py-4 text-slate-500 text-xs font-medium">
+                        {new Date(r.tanggalSetor).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td className="px-6 py-4 font-medium text-slate-700 text-xs">{r.wilayah?.namaWilayah}</td>
+                      <td className="px-6 py-4 text-xs font-medium text-slate-700">{r.jenisSampah?.namaJenis}</td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex items-center justify-center">
                           <button
-                            onClick={() => setSelectedPhoto(r.fotoSampah?.urlFoto || null)}
+                            onClick={() => setSelectedPhoto(fotoSrc)}
                             className="relative w-10 h-8 rounded-lg overflow-hidden border border-slate-200 hover:border-emerald-500 transition-colors shadow-sm group/photo flex items-center justify-center bg-slate-100"
+                            title="Klik untuk melihat foto"
                           >
                             <img
-                              src={r.fotoSampah.urlFoto}
+                              src={fotoSrc}
                               alt="Sampah"
                               className="w-full h-full object-cover group-hover/photo:scale-110 transition-transform duration-300"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/uploads/foto_sampah_default.jpg";
+                                (e.target as HTMLImageElement).src = getFallbackImage(r.jenisSampah?.namaJenis);
                               }}
                             />
                             <div className="absolute inset-0 bg-black/25 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center text-white text-[8px] font-bold">
                               BUKA
                             </div>
                           </button>
-                        ) : (
-                          <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/50">
-                            -
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right font-extrabold text-slate-800">{Number(r.beratKg).toFixed(1)} kg</td>
-                    <td className="px-7 py-4 text-right font-extrabold text-emerald-600">
-                      +{Number(r.subtotalPoin).toLocaleString("id-ID")} poin
-                    </td>
-                  </tr>
-                ))
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right font-extrabold text-slate-800">{Number(r.beratKg).toFixed(1)} kg</td>
+                      <td className="px-6 py-4 text-right font-extrabold text-emerald-600">
+                        +{Number(r.subtotalPoin).toLocaleString("id-ID")} poin
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <Link
+                          href={`/laporan/${r.id}`}
+                          className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200/60 transition-colors"
+                        >
+                          Detail
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -233,7 +249,7 @@ export default function WargaDashboardPage() {
                 alt="Pratinjau Foto Sampah"
                 className="w-full h-full object-contain"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/uploads/foto_sampah_default.jpg";
+                  (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%2310b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
                 }}
               />
             </div>

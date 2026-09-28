@@ -2,6 +2,8 @@
 
 import { prisma } from "./prisma";
 import { revalidatePath } from "next/cache";
+import { createHash } from "crypto";
+import { rupiahToPoin } from "./poin";
 
 export interface ActionResult<T> {
   success: boolean;
@@ -21,7 +23,7 @@ export async function seedIfEmpty() {
         nama: "Ahmad Rifai (Admin)",
         email: "admin@ecowaste.id",
         noHp: "081234567890",
-        password: "password123",
+        password: hashPass("password123"),
         role: "admin",
       },
     });
@@ -31,7 +33,7 @@ export async function seedIfEmpty() {
         nama: "Siti Nurhaliza",
         email: "siti@ecowaste.id",
         noHp: "081298765432",
-        password: "password123",
+        password: hashPass("password123"),
         role: "warga",
       },
     });
@@ -41,7 +43,7 @@ export async function seedIfEmpty() {
         nama: "Budi Santoso",
         email: "budi@ecowaste.id",
         noHp: "081311223344",
-        password: "password123",
+        password: hashPass("password123"),
         role: "warga",
       },
     });
@@ -120,6 +122,10 @@ export async function seedIfEmpty() {
   }
 }
 
+// ponytail: SHA-256 via stdlib crypto — good enough for a school project.
+// Upgrade path: swap to bcrypt if you add user-controlled data at production scale.
+const hashPass = (p: string) => createHash("sha256").update(p.trim()).digest("hex");
+
 // ── Auth Actions (Multi-User) ───────────────────────────
 export async function loginUser(
   emailOrHp: string,
@@ -139,7 +145,9 @@ export async function loginUser(
       return { success: false, error: "Email atau Nomor HP tidak terdaftar." };
     }
 
-    if (user.password !== pass.trim()) {
+    // ponytail: dukung hash dan plaintext agar akun seed/lama tetap bisa login
+    const isPassValid = user.password === pass.trim() || user.password === hashPass(pass);
+    if (!isPassValid) {
       return { success: false, error: "Password salah." };
     }
 
@@ -180,7 +188,7 @@ export async function registerUser(data: {
         nama,
         email,
         noHp,
-        password,
+        password: hashPass(password),
         alamat: data.alamat?.trim() || null,
         role: "warga",
       },
@@ -292,8 +300,18 @@ export async function processPenukaran(data: {
       };
     }
 
-    // Approve transaction: Debit from SaldoLog
+    // Approve transaction: re-check saldo inside $transaction to prevent race condition
     const updated = await prisma.$transaction(async (tx) => {
+      // Re-fetch saldo inside transaction to guard against concurrent approvals
+      const logs = await tx.saldoLog.findMany({ where: { userId: p.idWarga } });
+      const kredit = logs.filter((l) => l.tipe === "kredit").reduce((s, l) => s + Number(l.jumlah), 0);
+      const debit  = logs.filter((l) => l.tipe === "debit").reduce((s, l) => s + Number(l.jumlah), 0);
+      const saldoAktual = kredit - debit;
+
+      if (saldoAktual < Number(p.jumlahPoin)) {
+        throw new Error(`Saldo warga tidak mencukupi (saldo aktual: ${saldoAktual.toLocaleString("id-ID")} poin).`);
+      }
+
       const pUpdated = await tx.penukaran.update({
         where: { id: data.penukaranId },
         data: {
@@ -552,7 +570,7 @@ export async function addWargaFromAdmin(data: {
         nama,
         email,
         noHp,
-        password: "password123", // Default password for newly created warga
+        password: hashPass("password123"), // Default password for newly created warga
         alamat: data.alamat?.trim() || null,
         role: "warga",
       },
@@ -593,6 +611,40 @@ export async function getLaporanRecords() {
   }));
 }
 
+export async function getLaporanById(id: string) {
+  await seedIfEmpty();
+  try {
+    const r = await prisma.laporanSampah.findUnique({
+      where: { id: String(id) },
+      include: {
+        user: true,
+        jenisSampah: true,
+        wilayah: true,
+        fotoSampah: true,
+      },
+    });
+
+    if (!r) return null;
+
+    return {
+      ...r,
+      beratKg: Number(r.beratKg),
+      hargaSnapshot: Number(r.hargaSnapshot),
+      subtotalPoin: Number(r.subtotalPoin),
+      tanggalSetor: r.tanggalSetor.toISOString(),
+      createdAt: r.createdAt.toISOString(),
+      updatedAt: r.updatedAt.toISOString(),
+      jenisSampah: {
+        ...r.jenisSampah,
+        hargaPerKg: Number(r.jenisSampah.hargaPerKg),
+      },
+    };
+  } catch (err) {
+    console.error("Error fetching laporan by id:", err);
+    return null;
+  }
+}
+
 export async function createLaporanSampah(data: {
   userId: string;
   jenisSampahId: string;
@@ -608,14 +660,24 @@ export async function createLaporanSampah(data: {
   if (!data.jenisSampahId) return { success: false, error: "Jenis Sampah wajib dipilih." };
   if (!data.wilayahId) return { success: false, error: "Wilayah wajib dipilih." };
 
-  const fotoUrl = data.urlFoto || "/uploads/foto_sampah_default.jpg";
-
   try {
     const jenis = await prisma.jenisSampah.findUnique({ where: { id: data.jenisSampahId } });
     if (!jenis) return { success: false, error: "Jenis sampah tidak ditemukan." };
 
+    const namaJenisLower = (jenis.namaJenis || "").toLowerCase();
+    let defaultFoto = "/uploads/sample_plastik.jpg";
+    if (namaJenisLower.includes("kertas") || namaJenisLower.includes("karton") || namaJenisLower.includes("kardus")) {
+      defaultFoto = "/uploads/sample_kertas.jpg";
+    } else if (namaJenisLower.includes("logam") || namaJenisLower.includes("besi") || namaJenisLower.includes("kaleng")) {
+      defaultFoto = "/uploads/sample_logam.jpg";
+    } else if (namaJenisLower.includes("kaca")) {
+      defaultFoto = "/uploads/sample_kaca.jpg";
+    }
+
+    const fotoUrl = data.urlFoto || defaultFoto;
     const hargaSnapshot = Number(jenis.hargaPerKg);
-    const subtotalPoin = data.beratKg * hargaSnapshot;
+    // ponytail: poin = rupiah × POIN_MULTIPLIER (10×) — lihat lib/poin.ts
+    const subtotalPoin = rupiahToPoin(data.beratKg * hargaSnapshot);
 
     const result = await prisma.$transaction(async (tx) => {
       const laporan = await tx.laporanSampah.create({
@@ -655,6 +717,8 @@ export async function createLaporanSampah(data: {
 
     revalidatePath("/");
     revalidatePath("/input");
+    revalidatePath("/admin/laporan");
+    revalidatePath("/warga/setoran");
     return {
       success: true,
       data: {
@@ -755,5 +819,69 @@ export async function updateFeedbackStatus(
     return { success: true, data: res };
   } catch (err: any) {
     return { success: false, error: err.message || "Gagal memperbarui status feedback." };
+  }
+}
+
+// ── Profile Actions ─────────────────────────────────────
+export async function updateUserProfile(data: {
+  userId: string;
+  nama: string;
+  email: string;
+  noHp: string;
+  alamat?: string;
+  password?: string;
+}): Promise<ActionResult<any>> {
+  const userId = data.userId;
+  const nama = data.nama.trim();
+  const email = data.email.trim().toLowerCase();
+  const noHp = data.noHp.trim();
+
+  if (!userId) return { success: false, error: "User ID wajib disertakan." };
+  if (!nama || nama.length < 3) return { success: false, error: "Nama minimal 3 karakter." };
+  if (!email || !email.includes("@")) return { success: false, error: "Format email tidak valid." };
+  if (!noHp || noHp.length < 9) return { success: false, error: "Nomor HP minimal 9 digit." };
+
+  try {
+    // Check email uniqueness, excluding current user
+    const existingEmail = await prisma.user.findFirst({
+      where: {
+        email,
+        NOT: { id: userId }
+      }
+    });
+    if (existingEmail) return { success: false, error: "Email sudah digunakan oleh akun lain." };
+
+    // Check noHp uniqueness, excluding current user
+    const existingHp = await prisma.user.findFirst({
+      where: {
+        noHp,
+        NOT: { id: userId }
+      }
+    });
+    if (existingHp) return { success: false, error: "Nomor HP sudah digunakan oleh akun lain." };
+
+    const updateData: any = {
+      nama,
+      email,
+      noHp,
+      alamat: data.alamat?.trim() || null
+    };
+
+    if (data.password && data.password.trim().length >= 6) {
+      updateData.password = hashPass(data.password);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData
+    });
+
+    revalidatePath("/settings");
+    revalidatePath("/admin/dashboard");
+    revalidatePath("/warga/dashboard");
+
+    return { success: true, data: updatedUser };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Gagal memperbarui profil." };
   }
 }

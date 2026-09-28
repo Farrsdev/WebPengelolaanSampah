@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Gift, Coins, AlertCircle, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { submitPenukaran, getSaldoWarga, getPenukaranList } from "@/lib/actions";
+import { poinToRupiah, cashRateLabel } from "@/lib/poin";
 
 export default function PenukaranPoinPage() {
   const { user } = useAuth();
@@ -21,7 +22,7 @@ export default function PenukaranPoinPage() {
     setSaldo(s.saldoPoin);
 
     const list = await getPenukaranList();
-    setPenukaranList(list.filter((p) => p.idWarga === user.id));
+    setPenukaranList(list.filter((p) => p.idWarga === user.id || p.warga?.email === user.email));
   };
 
   useEffect(() => {
@@ -80,8 +81,9 @@ export default function PenukaranPoinPage() {
           </p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-slate-400 font-medium">Nilai Konversi Uang</p>
-          <p className="text-lg font-bold text-slate-700 mt-0.5">Rp {saldo.toLocaleString("id-ID")}</p>
+          <p className="text-xs text-slate-400 font-medium">Estimasi Cash Out</p>
+          <p className="text-lg font-bold text-slate-700 mt-0.5">≈ Rp {poinToRupiah(saldo).toLocaleString("id-ID")}</p>
+          <p className="text-[10px] text-slate-400 mt-0.5">{cashRateLabel}</p>
         </div>
       </div>
 
@@ -146,7 +148,7 @@ export default function PenukaranPoinPage() {
           />
           {jumlahPoin && !isNaN(Number(jumlahPoin)) && (
             <p className="text-xs text-emerald-600 font-semibold mt-2">
-              Setara: Rp {Number(jumlahPoin).toLocaleString("id-ID")}
+              Setara: Rp {poinToRupiah(Number(jumlahPoin)).toLocaleString("id-ID")}
             </p>
           )}
         </div>
@@ -188,7 +190,9 @@ export default function PenukaranPoinPage() {
                   <p className="text-sm font-bold text-slate-800">
                     {p.jenis === "uang_tunai" ? "💵 Uang Tunai" : "🎁 Reward"} — {p.jumlahPoin.toLocaleString("id-ID")} Poin
                   </p>
-                  <p className="text-xs text-slate-400 mt-0.5">{p.keteranganReward}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {p.keteranganReward} • {p.createdAt ? new Date(p.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}
+                  </p>
                 </div>
                 <div className="text-right">
                   {p.status === "menunggu" && (

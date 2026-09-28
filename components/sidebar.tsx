@@ -17,7 +17,8 @@ import {
   Menu,
   X,
   Calendar,
-  MessageSquare
+  MessageSquare,
+  MapPin
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
@@ -79,7 +80,12 @@ export default function Sidebar() {
 
             <Link href="/jenis-sampah" className={linkClass("/jenis-sampah")} onClick={() => setMobileOpen(false)}>
               <Database className="w-4 h-4 flex-shrink-0" />
-              Kategori
+              Kategori Sampah
+            </Link>
+
+            <Link href="/wilayah" className={linkClass("/wilayah")} onClick={() => setMobileOpen(false)}>
+              <MapPin className="w-4 h-4 flex-shrink-0" />
+              Data Wilayah
             </Link>
 
             <Link href="/admin/kegiatan" className={linkClass("/admin/kegiatan")} onClick={() => setMobileOpen(false)}>

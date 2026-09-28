@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { 
   FileText,
   Download,
@@ -11,13 +12,37 @@ import {
   UserCheck,
   TrendingUp,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Search,
+  Eye,
+  Image as ImageIcon
 } from "lucide-react";
 import { useStore } from "@/lib/store";
 
 export default function LaporanRekapPage() {
   const { berat, stats } = useStore();
   const [selectedMonth, setSelectedMonth] = useState("Oktober 2024");
+  const [searchLaporan, setSearchLaporan] = useState("");
+
+  const getFallbackImage = (jenis?: string) => {
+    const j = (jenis || "").toLowerCase();
+    if (j.includes("kertas") || j.includes("kardus")) return "/uploads/sample_kertas.jpg";
+    if (j.includes("logam") || j.includes("besi") || j.includes("kaleng")) return "/uploads/sample_logam.jpg";
+    if (j.includes("kaca")) return "/uploads/sample_kaca.jpg";
+    return "/uploads/sample_plastik.jpg";
+  };
+
+  const filteredLaporan = searchLaporan
+    ? berat.filter((r) => {
+        const q = searchLaporan.toLowerCase();
+        return (
+          (r.user?.nama || "").toLowerCase().includes(q) ||
+          (r.wilayah?.namaWilayah || "").toLowerCase().includes(q) ||
+          (r.jenisSampah?.namaJenis || "").toLowerCase().includes(q) ||
+          (r.kodeSetor || "").toLowerCase().includes(q)
+        );
+      })
+    : berat;
 
   // Dynamic calculations from database
   const dbTotalWeight = berat.reduce((sum, r) => sum + Number(r.beratKg), 0);
@@ -411,6 +436,115 @@ export default function LaporanRekapPage() {
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Live Database Laporan Table */}
+      <div className="glass-card-static p-6 bg-white shadow-sm border-slate-200/50 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h3 className="text-base font-extrabold text-slate-800">Daftar Transaksi Laporan Sampah (Live Data)</h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Total {berat.length} setoran sampah tercatat di Database. Klik "Lihat Detail" untuk melihat rincian & foto bukti.
+            </p>
+          </div>
+
+          <div className="relative min-w-[240px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Cari warga, jenis, wilayah..."
+              value={searchLaporan}
+              onChange={(e) => setSearchLaporan(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            />
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-400 font-bold uppercase tracking-wider">
+                <th className="px-4 py-3.5">Tanggal</th>
+                <th className="px-4 py-3.5">Foto Bukti</th>
+                <th className="px-4 py-3.5">Warga Penyetor</th>
+                <th className="px-4 py-3.5">Wilayah</th>
+                <th className="px-4 py-3.5">Jenis Sampah</th>
+                <th className="px-4 py-3.5 text-right">Berat (kg)</th>
+                <th className="px-4 py-3.5 text-right">Poin</th>
+                <th className="px-4 py-3.5 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50 font-medium">
+              {filteredLaporan.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
+                    {searchLaporan ? "Laporan tidak ditemukan." : "Belum ada data laporan sampah di database."}
+                  </td>
+                </tr>
+              ) : (
+                filteredLaporan.map((r) => {
+                  const fotoSrc = r.fotoSampah?.urlFoto || getFallbackImage(r.jenisSampah?.namaJenis);
+                  return (
+                    <tr key={r.id} className="hover:bg-slate-50/60 transition-colors">
+                      <td className="px-4 py-3.5 text-slate-500 whitespace-nowrap">
+                        {new Date(r.tanggalSetor).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <Link href={`/laporan/${r.id}`} className="block w-11 h-9 rounded-lg overflow-hidden border border-slate-200/80 shadow-xs group/thumb relative">
+                          <img
+                            src={fotoSrc}
+                            alt="Foto"
+                            className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform duration-300"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = getFallbackImage(r.jenisSampah?.namaJenis);
+                            }}
+                          />
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-md bg-emerald-50 text-emerald-800 font-bold text-[10px] flex items-center justify-center">
+                            {(r.user?.nama || "W")[0].toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-800">{r.user?.nama || "Warga"}</p>
+                            <p className="text-[10px] text-slate-400">{r.user?.email || ""}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5 text-slate-600">
+                        <span className="font-semibold block">{r.wilayah?.namaWilayah}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{r.wilayah?.kodeWilayah}</span>
+                      </td>
+                      <td className="px-4 py-3.5 font-bold text-slate-700">
+                        {r.jenisSampah?.namaJenis}
+                      </td>
+                      <td className="px-4 py-3.5 text-right font-extrabold text-slate-800">
+                        {Number(r.beratKg).toFixed(1)} kg
+                      </td>
+                      <td className="px-4 py-3.5 text-right font-extrabold text-emerald-600">
+                        +{Number(r.subtotalPoin).toLocaleString("id-ID")}
+                      </td>
+                      <td className="px-4 py-3.5 text-center">
+                        <Link
+                          href={`/laporan/${r.id}`}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[11px] border border-emerald-200/60 transition-all hover:scale-105"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Lihat Detail</span>
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

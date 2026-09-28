@@ -218,7 +218,7 @@ export default function AdminDashboardPage() {
         <div className="lg:col-span-8 glass-card-static p-6 shadow-sm border-slate-200/50 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
             <h2 className="text-base font-extrabold text-slate-800">Recent Transactions</h2>
-            <Link href="/" className="text-xs font-bold text-emerald-600 hover:underline">View All</Link>
+            <Link href="/admin/laporan" className="text-xs font-bold text-emerald-600 hover:underline">View All</Link>
           </div>
 
           <div className="overflow-x-auto">
@@ -229,7 +229,7 @@ export default function AdminDashboardPage() {
                   <th className="px-4 py-3">Warga Name</th>
                   <th className="px-4 py-3 text-right">Total Poin</th>
                   <th className="px-4 py-3 text-center">Status</th>
-                  <th className="px-4 py-3 text-right">Action</th>
+                  <th className="px-4 py-3 text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 font-medium">
@@ -240,7 +240,7 @@ export default function AdminDashboardPage() {
                     </td>
                   </tr>
                 ) : (
-                  filteredTransactions.slice(0, 5).map((tx) => (
+                  filteredTransactions.slice(0, 6).map((tx) => (
                     <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-4 py-3.5 text-slate-400 whitespace-nowrap">
                         {tx.date.toLocaleDateString("id-ID", {
@@ -283,10 +283,22 @@ export default function AdminDashboardPage() {
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-slate-400 hover:text-slate-600 cursor-pointer">
-                        <button className="p-1 hover:bg-slate-100 rounded-lg">
-                          <MoreVertical className="w-4 h-4" />
-                        </button>
+                      <td className="px-4 py-3.5 text-center">
+                        {tx.type === "setor" ? (
+                          <Link
+                            href={`/laporan/${tx.id}`}
+                            className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] border border-emerald-200/60 transition-colors"
+                          >
+                            Detail
+                          </Link>
+                        ) : (
+                          <Link
+                            href="/admin/penukaran"
+                            className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-[10px] transition-colors"
+                          >
+                            Tukar
+                          </Link>
+                        )}
                       </td>
                     </tr>
                   ))

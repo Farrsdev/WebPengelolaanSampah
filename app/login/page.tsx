@@ -7,8 +7,8 @@ import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const [emailOrHp, setEmailOrHp] = useState("admin@ecowaste.id");
-  const [password, setPassword] = useState("password123");
+  const [emailOrHp, setEmailOrHp] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -38,13 +38,6 @@ export default function LoginPage() {
           </div>
           <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Selamat Datang</h1>
           <p className="text-xs text-slate-500 mt-1">Masuk ke Sistem Bank Sampah Digital</p>
-        </div>
-
-        {/* Demo Account Tip Banner */}
-        <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 text-xs space-y-1">
-          <p className="font-bold">🔑 Akun Uji Coba Demo:</p>
-          <p>• <b>Admin</b>: <code>admin@ecowaste.id</code> / <code>password123</code></p>
-          <p>• <b>Warga</b>: <code>user@ecowaste.id</code> / <code>password123</code></p>
         </div>
 
         {/* Error Warning Banner */}

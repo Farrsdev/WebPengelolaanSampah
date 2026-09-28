@@ -35,6 +35,7 @@ interface AuthContextType {
     alamat?: string;
   }) => Promise<ActionResult<UserSession>>;
   logout: () => void;
+  updateUserSession: (session: UserSession) => void;
 }
 
 const AuthCtx = createContext<AuthContextType>(null!);
@@ -122,6 +123,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push("/login");
   }, [router]);
 
+  const updateUserSession = useCallback((session: UserSession) => {
+    setUser(session);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+  }, []);
+
   const isAdmin = user?.role === "admin";
   const isWarga = user?.role === "warga";
 
@@ -135,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         logout,
+        updateUserSession,
       }}
     >
       {children}

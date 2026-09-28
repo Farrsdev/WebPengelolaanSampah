@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 
 const AUTH_PAGES = ["/login", "/register"];
-const ADMIN_ONLY_PAGES = ["/admin/dashboard", "/input", "/wilayah", "/jenis-sampah", "/admin/penukaran", "/settings"];
+const ADMIN_ONLY_PAGES = ["/admin/dashboard", "/input", "/wilayah", "/jenis-sampah", "/admin/penukaran"];
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -28,7 +28,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       }
     } else {
       // Logged in -> guard role authorization
-      if (isAuthPage) {
+      if (isAuthPage || isLandingPage) {
         router.replace(user.role === "warga" ? "/warga/dashboard" : "/admin/dashboard");
       } else if (user.role === "warga" && ADMIN_ONLY_PAGES.includes(pathname)) {
         // Warga tries to access admin dashboard or admin settings/setup pages -> redirect
@@ -56,6 +56,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
   }
 
   if (user) {
+    if (isLandingPage || isAuthPage) {
+      return null;
+    }
     if (user.role === "warga" && ADMIN_ONLY_PAGES.includes(pathname)) {
       return null;
     }

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoWaste - Sistem Bank Sampah Digital | Interactive Web Preview</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .gradient-hero {
+      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15) 0%, rgba(248, 250, 252, 1) 70%);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans selection:bg-brand-500 selection:text-white">
+
+  <!-- NAVBAR -->
+  <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </div>
+        <div>
+          <span class="text-lg font-extrabold tracking-tight text-slate-900">EcoWaste</span>
+          <span class="text-xs ml-1.5 px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 font-bold">Preview</span>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+        <a href="#overview" class="hover:text-brand-600 transition-colors">Ringkasan</a>
+        <a href="#simulator" class="hover:text-brand-600 transition-colors">Simulasi Transaksi</a>
+        <a href="#features" class="hover:text-brand-600 transition-colors">Fitur Sistem</a>
+        <a href="#database" class="hover:text-brand-600 transition-colors">Skema Database</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 border border-slate-200">
+          Next.js 16 • PostgreSQL
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section id="overview" class="relative pt-16 pb-20 overflow-hidden gradient-hero border-b border-slate-200/60">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-200/60 text-brand-700 text-xs font-bold mb-6">
+        <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+        Proyek Fullstack Web Pengelolaan Bank Sampah Digital
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        Digitalisasi Bank Sampah Modern dengan <span class="bg-gradient-to-r from-brand-600 to-teal-600 bg-clip-text text-transparent">Double-Entry Ledger</span>
+      </h1>
+      <p class="mt-4 text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
+        Aplikasi web pencatatan sampah terintegrasi RDBMS PostgreSQL & Prisma ORM. Dilengkapi kalkulasi poin real-time (multiplier 10x), bukti foto timbangan fisik, pencairan uang tunai/sembako, dan proteksi anti-race condition.
+      </p>
+
+      <!-- Quick Badges -->
+      <div class="mt-8 flex flex-wrap justify-center gap-2 sm:gap-3 text-xs font-bold text-slate-700">
+        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">⚡ Next.js 16 (React 19)</span>
+        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">🐘 PostgreSQL Database</span>
+        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">💎 Prisma ORM (10 Tabel)</span>
+        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">🎨 Tailwind CSS v4</span>
+        <span class="px-3 py-1.5 bg-white rounded-lg shadow-sm border border-slate-200">🔒 SHA-256 Hashing</span>
+      </div>
+
+      <!-- Demo Accounts Box -->
+      <div class="mt-10 p-5 rounded-2xl glass-card max-w-xl mx-auto text-left shadow-lg shadow-slate-200/50">
+        <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">Akun Demo Sistem (Role-Based Access):</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="font-bold text-brand-700">👨‍💼 Role Admin:</span>
+            <div class="mt-1 font-mono text-slate-600 text-[11px]">admin@ecowaste.id</div>
+            <div class="font-mono text-slate-500 text-[11px]">Pass: password123</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="font-bold text-teal-700">🧑‍🌾 Role Warga / Nasabah:</span>
+            <div class="mt-1 font-mono text-slate-600 text-[11px]">user@ecowaste.id</div>
+            <div class="font-mono text-slate-500 text-[11px]">Pass: password123</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE SIMULATOR (TRANSACTION CALCULATOR) -->
+  <section id="simulator" class="py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Simulasi Kalkulator Poin Transaksi</h2>
+      <p class="text-sm text-slate-500 mt-2">Coba langsung logika formula yang ada pada file <code class="text-brand-700 font-mono font-bold">lib/poin.ts</code> aplikasi EcoWaste.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <!-- Calculator Input -->
+      <div class="lg:col-span-7 p-6 rounded-2xl glass-card shadow-sm border border-slate-200 space-y-5">
+        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-md bg-brand-500 text-white flex items-center justify-center text-xs font-black">1</span>
+          Input Timbangan Sampah
+        </h3>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Pilih Kategori Sampah</label>
+          <select id="simJenis" onchange="hitungSimulasi()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 focus:outline-none focus:border-brand-500">
+            <option value="3000">Kardus & Kertas Bekas (Rp 3.000 / kg)</option>
+            <option value="4500" selected>Botol Plastik PET Bersih (Rp 4.500 / kg)</option>
+            <option value="8000">Kaleng Aluminium & Besi (Rp 8.000 / kg)</option>
+            <option value="1500">Minyak Jelantah (Rp 1.500 / kg)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Berat Timbangan (Kilogram)</label>
+          <div class="relative">
+            <input type="number" id="simBerat" value="3.5" min="0.1" step="0.1" oninput="hitungSimulasi()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-500 pr-12">
+            <span class="absolute right-3.5 top-2.5 text-xs font-bold text-slate-400">kg</span>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          <span>Multiplier Sistem: <strong class="text-slate-800 font-mono">10x</strong></span>
+          <span>Cash Rate: <strong class="text-slate-800 font-mono">Rp 0.08 / Poin</strong></span>
+        </div>
+      </div>
+
+      <!-- Calculation Result Card -->
+      <div class="lg:col-span-5 p-6 rounded-2xl bg-gradient-to-br from-brand-600 to-teal-700 text-white shadow-xl shadow-brand-600/20 flex flex-col justify-between">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/20">Hasil Estimasi Transaksi</span>
+          <div class="mt-5">
+            <p class="text-xs text-brand-100 font-medium">Poin Diterima Nasabah (+Kredit):</p>
+            <p id="resPoin" class="text-3xl sm:text-4xl font-black tracking-tight mt-0.5">157.500 <span class="text-base font-normal">Poin</span></p>
+          </div>
+          <div class="mt-4 pt-4 border-t border-white/20">
+            <p class="text-xs text-brand-100 font-medium">Nilai Pencairan Tunai (Cash Out):</p>
+            <p id="resUang" class="text-xl font-bold mt-0.5">Rp 12.600</p>
+            <p class="text-[11px] text-brand-200 mt-1">*Margin 20% dialokasikan kas operasional bank sampah.</p>
+          </div>
+        </div>
+        <div class="mt-6 text-[11px] text-brand-100 bg-black/20 p-2.5 rounded-lg font-mono">
+          Formula: Math.floor(Berat × Harga × 10)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES GRID -->
+  <section id="features" class="py-16 bg-white border-y border-slate-200/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Fitur Unggulan Sistem EcoWaste</h2>
+        <p class="text-sm text-slate-500 mt-2">Dibangun dengan standar rekayasa perangkat lunak modern untuk performa dan keamanan data tinggi.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
+          <div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-lg mb-4">💳</div>
+          <h3 class="text-base font-bold text-slate-800">Double-Entry Ledger Saldo</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Saldo nasabah tidak disimpan sebagai angka biasa, melainkan dihitung otomatis dari mutasi riil: <code class="font-mono text-[11px] bg-slate-200/70 px-1 py-0.5 rounded">SUM(kredit) - SUM(debit)</code> di tabel SaldoLog.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-lg mb-4">🛡️</div>
+          <h3 class="text-base font-bold text-slate-800">Anti-Race Condition Guard</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Pada approval penukaran poin, sistem melakukan re-check saldo di dalam database transaction sebelum mutasi debit dibuat agar saldo nasabah tidak pernah minus.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg mb-4">📸</div>
+          <h3 class="text-base font-bold text-slate-800">Bukti Foto Timbangan Fisik</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Setiap transaksi setoran sampah dilengkapi foto timbangan fisik mandiri (Base64/SVG Data URL) yang dapat dipratinjau melalui popup modal baik oleh warga maupun admin.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg mb-4">🔐</div>
+          <h3 class="text-base font-bold text-slate-800">Password Hashing SHA-256</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Tidak ada kata sandi yang disimpan plaintext. Seluruh autentikasi menggunakan enkripsi hash bawaan Node.js <code class="font-mono text-[11px] bg-slate-200/70 px-1 py-0.5 rounded">crypto</code> stdlib tanpa dependensi rentan.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
+          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-lg mb-4">📦</div>
+          <h3 class="text-base font-bold text-slate-800">Input Setoran Multi-Row</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Form transaksi Bento Grid modern memungkinkan petugas menimbang dan mencatat berbagai jenis sampah sekaligus dalam satu sesi transaksi secara efisien.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg mb-4">🚀</div>
+          <h3 class="text-base font-bold text-slate-800">Auto-Redirect Role Guard</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Pengguna yang sudah login secara otomatis diarahkan ke dashboard perannya masing-masing tanpa harus kembali ke landing page secara berulang-ulang.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATABASE STRUCTURE -->
+  <section id="database" class="py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Integrasi Basis Data (10 Model RDBMS)</h2>
+      <p class="text-sm text-slate-500 mt-2">Dikelola menggunakan Prisma ORM dan terhubung ke PostgreSQL lokal.</p>
+    </div>
+
+    <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
+          <tr>
+            <th class="px-5 py-3.5">Nama Model / Tabel</th>
+            <th class="px-5 py-3.5">Fungsi Entitas</th>
+            <th class="px-5 py-3.5">Constraint Utama</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-slate-600">
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">User</td><td class="px-5 py-3">Akun pengguna warga & admin</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(email, noHp)</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">JenisSampah</td><td class="px-5 py-3">Kategori sampah & tarif dasar</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(namaJenis), Restrict</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">Wilayah</td><td class="px-5 py-3">Master zonasi RT/RW pengumpulan</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(namaWilayah, kodeWilayah)</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">LaporanSampah</td><td class="px-5 py-3">Transaksi setor sampah penimbangan</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(kodeSetor), FK User/Jenis/Wilayah</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">FotoSampah</td><td class="px-5 py-3">Bukti fisik timbangan sampah (1-to-1)</td><td class="px-5 py-3 font-mono">UUID PK, UNIQUE(laporanId), Cascade</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">SaldoLog</td><td class="px-5 py-3">Buku besar mutasi kredit & debit</td><td class="px-5 py-3 font-mono">UUID PK, FK userId (Cascade)</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">Penukaran</td><td class="px-5 py-3">Pengajuan pencairan saldo poin warga</td><td class="px-5 py-3 font-mono">UUID PK, FK idWarga, FK idAdmin, FK rewardId</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">Reward</td><td class="px-5 py-3">Katalog hadiah & paket sembako</td><td class="px-5 py-3 font-mono">UUID PK, stok (Int), aktif (Boolean)</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">KegiatanKomunitas</td><td class="px-5 py-3">Jadwal kerja bakti bank sampah</td><td class="px-5 py-3 font-mono">UUID PK, tanggal, lokasi</td></tr>
+          <tr class="hover:bg-slate-50/50"><td class="px-5 py-3 font-bold text-slate-800 font-mono">FeedbackWarga</td><td class="px-5 py-3">Aspirasi & aduan nasabah</td><td class="px-5 py-3 font-mono">UUID PK, FK userId (Cascade)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 text-xs text-center">
+    <div class="max-w-4xl mx-auto px-4 space-y-3">
+      <p class="font-bold text-slate-200">EcoWaste - Sistem Bank Sampah Digital</p>
+      <p>Proyek Pembelajaran Jarak Jauh (PJJ) Kejuruan Pemrograman Web • SMK RPL</p>
+      <p class="text-slate-500">Dikembangkan dengan Next.js 16, PostgreSQL, Prisma, dan Tailwind CSS.</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT FOR SIMULATOR -->
+  <script>
+    function hitungSimulasi() {
+      const harga = parseFloat(document.getElementById('simJenis').value) || 0;
+      const berat = parseFloat(document.getElementById('simBerat').value) || 0;
+      
+      const MULTIPLIER = 10;
+      const CASH_RATE = 0.08;
+
+      const subtotalPoin = Math.floor(berat * harga * MULTIPLIER);
+      const estimasiUang = Math.floor(subtotalPoin * CASH_RATE);
+
+      document.getElementById('resPoin').innerHTML = subtotalPoin.toLocaleString('id-ID') + ' <span class="text-base font-normal">Poin</span>';
+      document.getElementById('resUang').innerText = 'Rp ' + estimasiUang.toLocaleString('id-ID');
+    }
+    // Run on init
+    hitungSimulasi();
+  </script>
+</body>
+</html>

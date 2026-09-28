@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { History, Search, ImagePlus } from "lucide-react";
+import Link from "next/link";
+import { History, Search, ImagePlus, Eye, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useStore } from "@/lib/store";
 
@@ -10,6 +11,14 @@ export default function WargaSetoranPage() {
   const { berat } = useStore();
   const [search, setSearch] = useState("");
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
+  const getFallbackImage = (jenis?: string) => {
+    const j = (jenis || "").toLowerCase();
+    if (j.includes("kertas") || j.includes("kardus")) return "/uploads/sample_kertas.jpg";
+    if (j.includes("logam") || j.includes("besi") || j.includes("kaleng")) return "/uploads/sample_logam.jpg";
+    if (j.includes("kaca")) return "/uploads/sample_kaca.jpg";
+    return "/uploads/sample_plastik.jpg";
+  };
 
   const userRecords = user
     ? berat.filter((r) => r.user?.id === user.id || r.user?.email === user.email)
@@ -32,7 +41,7 @@ export default function WargaSetoranPage() {
     : userRecords;
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-5xl space-y-8 animate-fade-in">
       {/* Header */}
       <div className="animate-fade-in-up">
         <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Setoran Saya</h1>
@@ -69,67 +78,75 @@ export default function WargaSetoranPage() {
                 <th className="px-6 py-4">Jenis Sampah</th>
                 <th className="px-6 py-4 text-center">Foto Sampah</th>
                 <th className="px-6 py-4 text-right">Berat (kg)</th>
-                <th className="px-7 py-4 text-right">Poin Diperoleh</th>
+                <th className="px-6 py-4 text-right">Poin Diperoleh</th>
+                <th className="px-6 py-4 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-7 py-12 text-center text-slate-400 text-sm">
+                  <td colSpan={7} className="px-7 py-12 text-center text-slate-400 text-sm">
                     {search ? "Data tidak ditemukan" : "Belum ada riwayat setor sampah"}
                   </td>
                 </tr>
               ) : (
-                filtered.map((r) => (
-                  <tr key={r.id} className="hover:bg-emerald-500/[0.04] transition-colors duration-150">
-                    <td className="px-7 py-4 text-slate-500 text-xs font-medium">
-                      {new Date(r.tanggalSetor).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="font-medium text-slate-700 text-xs block">{r.wilayah?.namaWilayah}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">{r.wilayah?.kodeWilayah}</span>
-                    </td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-700">{r.jenisSampah?.namaJenis}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center">
-                        {r.fotoSampah?.urlFoto ? (
+                filtered.map((r) => {
+                  const fotoSrc = r.fotoSampah?.urlFoto || getFallbackImage(r.jenisSampah?.namaJenis);
+                  return (
+                    <tr key={r.id} className="hover:bg-emerald-500/[0.04] transition-colors duration-150">
+                      <td className="px-7 py-4 text-slate-500 text-xs font-medium">
+                        {new Date(r.tanggalSetor).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-medium text-slate-700 text-xs block">{r.wilayah?.namaWilayah}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{r.wilayah?.kodeWilayah}</span>
+                      </td>
+                      <td className="px-6 py-4 text-xs font-medium text-slate-700">{r.jenisSampah?.namaJenis}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center">
                           <button
-                            onClick={() => setSelectedPhoto(r.fotoSampah?.urlFoto || null)}
+                            onClick={() => setSelectedPhoto(fotoSrc)}
                             className="relative w-12 h-10 rounded-lg overflow-hidden border border-slate-200 hover:border-emerald-500 transition-colors shadow-sm group/photo flex items-center justify-center bg-slate-100"
+                            title="Klik untuk melihat foto"
                           >
                             <img
-                              src={r.fotoSampah.urlFoto}
+                              src={fotoSrc}
                               alt="Sampah"
                               className="w-full h-full object-cover group-hover/photo:scale-110 transition-transform duration-300"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/uploads/foto_sampah_default.jpg";
+                                (e.target as HTMLImageElement).src = getFallbackImage(r.jenisSampah?.namaJenis);
                               }}
                             />
-                            <div className="absolute inset-0 bg-black/25 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center text-white text-[9px] font-bold">
+                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center text-white text-[8px] font-bold">
                               LIHAT
                             </div>
                           </button>
-                        ) : (
-                          <span className="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded border border-slate-200/50">
-                            -
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right font-extrabold text-slate-800">
-                      {Number(r.beratKg).toFixed(1)} kg
-                    </td>
-                    <td className="px-7 py-4 text-right font-extrabold text-emerald-600">
-                      +{Number(r.subtotalPoin).toLocaleString("id-ID")} poin
-                    </td>
-                  </tr>
-                ))
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right font-extrabold text-slate-800">
+                        {Number(r.beratKg).toFixed(1)} kg
+                      </td>
+                      <td className="px-6 py-4 text-right font-extrabold text-emerald-600">
+                        +{Number(r.subtotalPoin).toLocaleString("id-ID")} poin
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <Link
+                          href={`/laporan/${r.id}`}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200/60 transition-all hover:scale-105"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Detail</span>
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -152,7 +169,7 @@ export default function WargaSetoranPage() {
                 alt="Pratinjau Foto Sampah"
                 className="w-full h-full object-contain"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/uploads/foto_sampah_default.jpg";
+                  (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%2310b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
                 }}
               />
             </div>
