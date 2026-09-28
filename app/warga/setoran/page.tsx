@@ -21,7 +21,12 @@ export default function WargaSetoranPage() {
   };
 
   const userRecords = user
-    ? berat.filter((r) => r.user?.id === user.id || r.user?.email === user.email)
+    ? berat.filter(
+        (r: any) =>
+          r.user?.id === user.id ||
+          r.userId === user.id ||
+          (r.user?.email && user?.email && r.user.email.toLowerCase() === user.email.toLowerCase())
+      )
     : [];
 
   const filtered = search

@@ -33,7 +33,14 @@ export default function WargaDashboardPage() {
     return "/uploads/sample_plastik.jpg";
   };
 
-  const userRecords = user ? berat.filter((r) => r.user?.id === user.id || r.user?.email === user.email) : [];
+  const userRecords = user
+    ? berat.filter(
+        (r: any) =>
+          r.user?.id === user.id ||
+          r.userId === user.id ||
+          (r.user?.email && user?.email && r.user.email.toLowerCase() === user.email.toLowerCase())
+      )
+    : [];
   const totalKgWarga = userRecords.reduce((sum, r) => sum + Number(r.beratKg), 0);
 
   return (

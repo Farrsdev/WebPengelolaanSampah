@@ -367,7 +367,13 @@ export async function getPenukaranList() {
 // ── Wilayah Actions ─────────────────────────────────────
 export async function getWilayah() {
   await seedIfEmpty();
-  return prisma.wilayah.findMany({ orderBy: { createdAt: "asc" } });
+  const list = await prisma.wilayah.findMany({ orderBy: { createdAt: "asc" } });
+  return list.map((w) => ({
+    id: w.id,
+    namaWilayah: w.namaWilayah,
+    kodeWilayah: w.kodeWilayah,
+    deskripsi: w.deskripsi,
+  }));
 }
 
 export async function createWilayah(data: {
@@ -511,7 +517,15 @@ export async function deleteJenisSampah(id: string): Promise<ActionResult<any>> 
 // ── Users Actions ────────────────────────────────────────
 export async function getUsers() {
   await seedIfEmpty();
-  return prisma.user.findMany({ orderBy: { createdAt: "asc" } });
+  const users = await prisma.user.findMany({ orderBy: { createdAt: "asc" } });
+  return users.map((u) => ({
+    id: u.id,
+    nama: u.nama,
+    email: u.email,
+    noHp: u.noHp,
+    role: u.role,
+    alamat: u.alamat,
+  }));
 }
 
 export async function getWargaList() {
@@ -597,17 +611,47 @@ export async function getLaporanRecords() {
   });
 
   return records.map((r) => ({
-    ...r,
+    id: r.id,
+    kodeSetor: r.kodeSetor,
+    userId: r.userId,
     beratKg: Number(r.beratKg),
     hargaSnapshot: Number(r.hargaSnapshot),
     subtotalPoin: Number(r.subtotalPoin),
+    catatan: r.catatan,
     tanggalSetor: r.tanggalSetor.toISOString(),
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt.toISOString(),
-    jenisSampah: {
-      ...r.jenisSampah,
-      hargaPerKg: Number(r.jenisSampah.hargaPerKg),
-    },
+    user: r.user
+      ? {
+          id: r.user.id,
+          nama: r.user.nama,
+          email: r.user.email,
+          noHp: r.user.noHp,
+          role: r.user.role,
+        }
+      : null,
+    wilayah: r.wilayah
+      ? {
+          id: r.wilayah.id,
+          namaWilayah: r.wilayah.namaWilayah,
+          kodeWilayah: r.wilayah.kodeWilayah,
+          deskripsi: r.wilayah.deskripsi,
+        }
+      : null,
+    jenisSampah: r.jenisSampah
+      ? {
+          id: r.jenisSampah.id,
+          namaJenis: r.jenisSampah.namaJenis,
+          hargaPerKg: Number(r.jenisSampah.hargaPerKg),
+          bisaDidaurUlang: r.jenisSampah.bisaDidaurUlang,
+          keterangan: r.jenisSampah.keterangan,
+        }
+      : null,
+    fotoSampah: r.fotoSampah
+      ? {
+          urlFoto: r.fotoSampah.urlFoto,
+        }
+      : null,
   }));
 }
 

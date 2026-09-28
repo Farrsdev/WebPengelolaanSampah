@@ -11,7 +11,8 @@ import {
   Calendar,
   X,
   Upload,
-  ImagePlus
+  ImagePlus,
+  ChevronDown
 } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { POIN_MULTIPLIER, poinToRupiah } from "@/lib/poin";
@@ -48,13 +49,16 @@ export default function InputSetorPage() {
   });
 
   // Filter citizens for search autocomplete
-  const citizenSuggestions = searchQuery
-    ? users.filter((u) => 
-        u.role === "warga" && 
-        (u.nama.toLowerCase().includes(searchQuery.toLowerCase()) || 
-         u.email.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
-    : users.filter((u) => u.role === "warga");
+  const wargas = users.filter((u) => u.role === "warga" || !u.role);
+  const citizenSuggestions = searchQuery.trim()
+    ? wargas.filter((u) => {
+        const q = searchQuery.toLowerCase().trim();
+        const nama = (u.nama || "").toLowerCase();
+        const email = (u.email || "").toLowerCase();
+        const noHp = (u.noHp || "");
+        return nama.includes(q) || email.includes(q) || noHp.includes(q);
+      })
+    : wargas;
 
   // Add row
   const addRow = () => {
@@ -197,21 +201,34 @@ export default function InputSetorPage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Cari nama warga atau ID..."
+                  placeholder={`Cari dari ${wargas.length} warga atau klik untuk memilih...`}
                   value={searchQuery}
                   onFocus={() => setShowDropdown(true)}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
                     setShowDropdown(true);
                   }}
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200/60 rounded-xl text-slate-700 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-200/60 rounded-xl text-slate-700 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-bold text-slate-400 hover:text-emerald-600 transition-colors"
+                  title="Lihat Semua Warga"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </button>
 
                 {/* Dropdown Suggestions */}
                 {showDropdown && (
                   <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-200/60 z-20 max-h-60 overflow-y-auto divide-y divide-slate-100">
                     {citizenSuggestions.length === 0 ? (
-                      <p className="p-4 text-center text-xs text-slate-400">Warga tidak ditemukan.</p>
+                      <div className="p-4 text-center text-xs text-slate-400 space-y-1">
+                        <p>Warga tidak ditemukan.</p>
+                        {wargas.length === 0 && (
+                          <p className="text-emerald-600 font-semibold">Belum ada akun warga di sistem. Silakan tambah di menu Warga.</p>
+                        )}
+                      </div>
                     ) : (
                       citizenSuggestions.map((u) => (
                         <div
@@ -219,16 +236,17 @@ export default function InputSetorPage() {
                           onClick={() => {
                             setSelectedWarga(u);
                             setShowDropdown(false);
+                            setSearchQuery("");
                           }}
                           className="p-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors"
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-800 flex items-center justify-center font-bold text-xs">
-                              {u.nama[0].toUpperCase()}
+                              {(u.nama && u.nama[0]) ? u.nama[0].toUpperCase() : "W"}
                             </div>
                             <div>
                               <p className="text-xs font-bold text-slate-800">{u.nama}</p>
-                              <p className="text-[10px] text-slate-400 font-medium">Email: {u.email} • HP: {u.noHp}</p>
+                              <p className="text-[10px] text-slate-400 font-medium">Email: {u.email} • HP: {u.noHp || "-"}</p>
                             </div>
                           </div>
                           <span className="text-xs text-emerald-600 font-bold hover:underline">Pilih</span>
